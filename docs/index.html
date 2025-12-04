@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gastrotechnogroup - Vánoční Hra</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -279,9 +279,186 @@
                     0 0 100px rgba(200, 30, 30, 0.6);
             }
         }
+
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .control-left, .control-right {
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .touch-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(200, 30, 30, 0.9), rgba(150, 20, 20, 0.9));
+            border: 3px solid #FFD700;
+            color: #FFD700;
+            font-size: 28px;
+            font-weight: bold;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 2px 10px rgba(255,255,255,0.1);
+            transition: transform 0.1s, box-shadow 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .touch-btn:active, .touch-btn.pressed {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 2px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, rgba(150, 20, 20, 0.95), rgba(120, 15, 15, 0.95));
+        }
+
+        .jump-btn {
+            width: 90px;
+            height: 90px;
+            font-size: 18px;
+        }
+
+        /* Show mobile controls on touch devices */
+        @media (max-width: 1024px), (pointer: coarse) {
+            .mobile-controls {
+                display: flex;
+            }
+
+            .game-container {
+                border-radius: 0;
+                border-width: 2px;
+            }
+
+            canvas {
+                width: 100vw;
+                height: auto;
+                max-height: 60vh;
+            }
+
+            .controls-info {
+                display: none;
+            }
+
+            .ui-overlay {
+                padding: 8px 15px;
+            }
+
+            .score-panel, .time-panel {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .logo-container-center {
+                top: 45px;
+            }
+
+            .center-logo {
+                height: 50px;
+            }
+
+            .santa-hat-center {
+                top: -35px;
+                width: 70px;
+                height: 45px;
+            }
+
+            .hat-top {
+                border-left: 35px solid transparent;
+                border-right: 35px solid transparent;
+                border-bottom: 40px solid #c81e1e;
+            }
+
+            .hat-top::before {
+                border-left: 22px solid transparent;
+                border-right: 22px solid transparent;
+                border-bottom: 22px solid #FFD700;
+                top: 6px;
+                left: -22px;
+            }
+
+            .hat-ball {
+                width: 16px;
+                height: 16px;
+                top: -7px;
+                right: 5px;
+            }
+
+            .hat-band {
+                width: 75px;
+                height: 10px;
+            }
+
+            .screen-title {
+                font-size: 28px;
+            }
+
+            .screen-subtitle {
+                font-size: 16px;
+            }
+
+            .start-btn {
+                padding: 12px 35px;
+                font-size: 18px;
+            }
+
+            .merry-christmas {
+                font-size: 32px;
+            }
+        }
+
+        /* Landscape orientation hint */
+        .rotate-hint {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            color: #FFD700;
+            font-size: 24px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .rotate-hint span {
+            font-size: 60px;
+            animation: rotate-phone 1.5s ease-in-out infinite;
+        }
+
+        @keyframes rotate-phone {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
+        }
+
+        @media (max-width: 600px) and (orientation: portrait) {
+            .rotate-hint {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Rotate device hint for portrait mode -->
+    <div class="rotate-hint" id="rotateHint">
+        <span>📱</span>
+        <p>Otočte telefon na šířku</p>
+    </div>
+
     <div class="game-container">
         <canvas id="gameCanvas" width="1200" height="600"></canvas>
         
@@ -334,6 +511,17 @@
             <h1 class="screen-title" style="color: #ff4444;">💀 Konec hry 💀</h1>
             <p class="screen-subtitle" id="gameOverReason">Spadl jste do propasti!</p>
             <button class="start-btn" onclick="restartGame()">🔄 Zkusit znovu</button>
+        </div>
+    </div>
+
+    <!-- Mobile Touch Controls -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="control-left">
+            <button class="touch-btn" id="btnLeft">◀</button>
+            <button class="touch-btn" id="btnRight">▶</button>
+        </div>
+        <div class="control-right">
+            <button class="touch-btn jump-btn" id="btnJump">SKOK</button>
         </div>
     </div>
 

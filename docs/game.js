@@ -265,6 +265,7 @@ const keys = {
     jump: false
 };
 
+// Keyboard controls
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowLeft') keys.left = true;
     if (e.code === 'ArrowRight') keys.right = true;
@@ -279,6 +280,92 @@ document.addEventListener('keyup', (e) => {
     if (e.code === 'ArrowRight') keys.right = false;
     if (e.code === 'Space') keys.jump = false;
 });
+
+// Mobile touch controls
+function setupMobileControls() {
+    const btnLeft = document.getElementById('btnLeft');
+    const btnRight = document.getElementById('btnRight');
+    const btnJump = document.getElementById('btnJump');
+    
+    if (!btnLeft || !btnRight || !btnJump) return;
+    
+    // Left button
+    btnLeft.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keys.left = true;
+        btnLeft.classList.add('pressed');
+    }, { passive: false });
+    
+    btnLeft.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keys.left = false;
+        btnLeft.classList.remove('pressed');
+    }, { passive: false });
+    
+    btnLeft.addEventListener('touchcancel', () => {
+        keys.left = false;
+        btnLeft.classList.remove('pressed');
+    });
+    
+    // Right button
+    btnRight.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keys.right = true;
+        btnRight.classList.add('pressed');
+    }, { passive: false });
+    
+    btnRight.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keys.right = false;
+        btnRight.classList.remove('pressed');
+    }, { passive: false });
+    
+    btnRight.addEventListener('touchcancel', () => {
+        keys.right = false;
+        btnRight.classList.remove('pressed');
+    });
+    
+    // Jump button
+    btnJump.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keys.jump = true;
+        btnJump.classList.add('pressed');
+    }, { passive: false });
+    
+    btnJump.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keys.jump = false;
+        btnJump.classList.remove('pressed');
+    }, { passive: false });
+    
+    btnJump.addEventListener('touchcancel', () => {
+        keys.jump = false;
+        btnJump.classList.remove('pressed');
+    });
+    
+    // Also support mouse for testing on desktop
+    btnLeft.addEventListener('mousedown', () => { keys.left = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('mouseup', () => { keys.left = false; btnLeft.classList.remove('pressed'); });
+    btnLeft.addEventListener('mouseleave', () => { keys.left = false; btnLeft.classList.remove('pressed'); });
+    
+    btnRight.addEventListener('mousedown', () => { keys.right = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('mouseup', () => { keys.right = false; btnRight.classList.remove('pressed'); });
+    btnRight.addEventListener('mouseleave', () => { keys.right = false; btnRight.classList.remove('pressed'); });
+    
+    btnJump.addEventListener('mousedown', () => { keys.jump = true; btnJump.classList.add('pressed'); });
+    btnJump.addEventListener('mouseup', () => { keys.jump = false; btnJump.classList.remove('pressed'); });
+    btnJump.addEventListener('mouseleave', () => { keys.jump = false; btnJump.classList.remove('pressed'); });
+}
+
+// Prevent scrolling on touch
+document.addEventListener('touchmove', (e) => {
+    if (gameState === 'playing') {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+// Initialize mobile controls when DOM is ready
+document.addEventListener('DOMContentLoaded', setupMobileControls);
 
 // Collision detection
 function checkCollision(rect1, rect2) {
