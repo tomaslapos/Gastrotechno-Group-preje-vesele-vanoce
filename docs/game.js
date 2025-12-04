@@ -1210,41 +1210,44 @@ function updateUI() {
 
 function showWinScreen() {
     gameState = 'win';
-    // Hide mobile controls
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls) {
-        mobileControls.classList.add('hidden');
-    }
+    showMobileControls(false);
     document.getElementById('winScreen').style.display = 'flex';
     document.getElementById('finalScore').textContent = `Sebrané nástroje: ${collectiblesCount}/10 | Čas: ${Math.ceil(GAME_TIME - timeRemaining)}s`;
 }
 
 function gameOver(reason) {
     gameState = 'gameover';
-    // Hide mobile controls
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls) {
-        mobileControls.classList.add('hidden');
-    }
+    showMobileControls(false);
     document.getElementById('gameOverScreen').style.display = 'flex';
     document.getElementById('gameOverReason').textContent = reason;
 }
 
 function startGame() {
     document.getElementById('startScreen').style.display = 'none';
-    // Show mobile controls when game starts
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls) {
-        mobileControls.classList.remove('hidden');
-    }
+    // Show mobile controls when game starts (only on touch devices)
+    showMobileControls(true);
     resetGame();
     gameState = 'playing';
     gameLoop();
 }
 
+// Helper function to show/hide mobile controls
+function showMobileControls(show) {
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls && isTouchDevice()) {
+        mobileControls.style.display = show ? 'flex' : 'none';
+    }
+}
+
+// Check if device supports touch
+function isTouchDevice() {
+    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia('(pointer: coarse)').matches);
+}
+
 function restartGame() {
     document.getElementById('winScreen').style.display = 'none';
     document.getElementById('gameOverScreen').style.display = 'none';
+    showMobileControls(true);
     resetGame();
     gameState = 'playing';
 }

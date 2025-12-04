@@ -299,10 +299,6 @@
             border-top: 3px solid #c81e1e;
         }
 
-        .mobile-controls.hidden {
-            display: none !important;
-        }
-
         .control-left, .control-right {
             display: flex;
             gap: 15px;
@@ -590,8 +586,8 @@
         </div>
     </div>
 
-    <!-- Mobile Touch Controls - Outside game container, hidden until game starts -->
-    <div class="mobile-controls hidden" id="mobileControls">
+    <!-- Mobile Touch Controls - Outside game container -->
+    <div class="mobile-controls" id="mobileControls">
         <div class="control-left">
             <button class="touch-btn" id="btnLeft" type="button">◀</button>
             <button class="touch-btn" id="btnRight" type="button">▶</button>
