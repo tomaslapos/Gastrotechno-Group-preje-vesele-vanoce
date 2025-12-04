@@ -10,6 +10,7 @@ const GAME_HEIGHT = 600;
 const GRAVITY = 0.6;
 const JUMP_FORCE = -14;
 const MOVE_SPEED = 6;
+const MOBILE_MOVE_SPEED = 4; // Slower for mobile
 const LEVEL_WIDTH = 13600;
 const GAME_TIME = 120;
 
@@ -386,13 +387,15 @@ function updatePlayer() {
             return;
         }
     } else {
-        // Normal controls
+        // Normal controls - use slower speed on mobile
+        const currentSpeed = isTouchDevice() ? MOBILE_MOVE_SPEED : MOVE_SPEED;
+        
         if (keys.left) {
-            player.velocityX = -MOVE_SPEED;
+            player.velocityX = -currentSpeed;
             player.direction = -1;
             player.walking = true;
         } else if (keys.right) {
-            player.velocityX = MOVE_SPEED;
+            player.velocityX = currentSpeed;
             player.direction = 1;
             player.walking = true;
         } else {
@@ -1264,6 +1267,11 @@ function resetGame() {
     collectiblesCount = 0;
     timeRemaining = GAME_TIME;
     cameraX = 0;
+    
+    // Reset key states
+    keys.left = false;
+    keys.right = false;
+    keys.jump = false;
     
     createLevel();
     updateUI();
