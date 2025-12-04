@@ -287,85 +287,79 @@ function setupMobileControls() {
     const btnRight = document.getElementById('btnRight');
     const btnJump = document.getElementById('btnJump');
     
-    if (!btnLeft || !btnRight || !btnJump) return;
+    if (!btnLeft || !btnRight || !btnJump) {
+        console.log('Mobile buttons not found');
+        return;
+    }
     
-    // Left button
-    btnLeft.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keys.left = true;
-        btnLeft.classList.add('pressed');
-    }, { passive: false });
+    console.log('Setting up mobile controls');
     
-    btnLeft.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keys.left = false;
-        btnLeft.classList.remove('pressed');
-    }, { passive: false });
+    // Helper function to add touch events
+    function addTouchEvents(button, keyName) {
+        // Touch events
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            keys[keyName] = true;
+            this.classList.add('pressed');
+            console.log(keyName + ' pressed');
+        }, { passive: false });
+        
+        button.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            keys[keyName] = false;
+            this.classList.remove('pressed');
+            console.log(keyName + ' released');
+        }, { passive: false });
+        
+        button.addEventListener('touchcancel', function(e) {
+            keys[keyName] = false;
+            this.classList.remove('pressed');
+        }, { passive: false });
+        
+        // Mouse events for desktop testing
+        button.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            keys[keyName] = true;
+            this.classList.add('pressed');
+        });
+        
+        button.addEventListener('mouseup', function(e) {
+            e.preventDefault();
+            keys[keyName] = false;
+            this.classList.remove('pressed');
+        });
+        
+        button.addEventListener('mouseleave', function(e) {
+            keys[keyName] = false;
+            this.classList.remove('pressed');
+        });
+    }
     
-    btnLeft.addEventListener('touchcancel', () => {
-        keys.left = false;
-        btnLeft.classList.remove('pressed');
-    });
-    
-    // Right button
-    btnRight.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keys.right = true;
-        btnRight.classList.add('pressed');
-    }, { passive: false });
-    
-    btnRight.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keys.right = false;
-        btnRight.classList.remove('pressed');
-    }, { passive: false });
-    
-    btnRight.addEventListener('touchcancel', () => {
-        keys.right = false;
-        btnRight.classList.remove('pressed');
-    });
-    
-    // Jump button
-    btnJump.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keys.jump = true;
-        btnJump.classList.add('pressed');
-    }, { passive: false });
-    
-    btnJump.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keys.jump = false;
-        btnJump.classList.remove('pressed');
-    }, { passive: false });
-    
-    btnJump.addEventListener('touchcancel', () => {
-        keys.jump = false;
-        btnJump.classList.remove('pressed');
-    });
-    
-    // Also support mouse for testing on desktop
-    btnLeft.addEventListener('mousedown', () => { keys.left = true; btnLeft.classList.add('pressed'); });
-    btnLeft.addEventListener('mouseup', () => { keys.left = false; btnLeft.classList.remove('pressed'); });
-    btnLeft.addEventListener('mouseleave', () => { keys.left = false; btnLeft.classList.remove('pressed'); });
-    
-    btnRight.addEventListener('mousedown', () => { keys.right = true; btnRight.classList.add('pressed'); });
-    btnRight.addEventListener('mouseup', () => { keys.right = false; btnRight.classList.remove('pressed'); });
-    btnRight.addEventListener('mouseleave', () => { keys.right = false; btnRight.classList.remove('pressed'); });
-    
-    btnJump.addEventListener('mousedown', () => { keys.jump = true; btnJump.classList.add('pressed'); });
-    btnJump.addEventListener('mouseup', () => { keys.jump = false; btnJump.classList.remove('pressed'); });
-    btnJump.addEventListener('mouseleave', () => { keys.jump = false; btnJump.classList.remove('pressed'); });
+    addTouchEvents(btnLeft, 'left');
+    addTouchEvents(btnRight, 'right');
+    addTouchEvents(btnJump, 'jump');
 }
 
-// Prevent scrolling on touch
-document.addEventListener('touchmove', (e) => {
-    if (gameState === 'playing') {
+// Prevent scrolling and zooming on mobile
+document.addEventListener('touchmove', function(e) {
+    if (e.target.closest('.mobile-controls')) {
         e.preventDefault();
     }
 }, { passive: false });
 
+// Prevent double-tap zoom
+document.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+}, { passive: false });
+
 // Initialize mobile controls when DOM is ready
-document.addEventListener('DOMContentLoaded', setupMobileControls);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMobileControls);
+} else {
+    setupMobileControls();
+}
 
 // Collision detection
 function checkCollision(rect1, rect2) {
