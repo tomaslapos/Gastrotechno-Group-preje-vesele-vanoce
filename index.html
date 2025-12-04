@@ -292,26 +292,30 @@
         .mobile-controls {
             display: none;
             width: 100%;
-            padding: 15px 20px;
+            padding: 20px;
             justify-content: space-between;
             align-items: center;
             background: linear-gradient(to bottom, #3a6a98, #2a5a88);
             border-top: 3px solid #c81e1e;
         }
 
+        .mobile-controls.hidden {
+            display: none !important;
+        }
+
         .control-left, .control-right {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
 
         .touch-btn {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(145deg, #c81e1e, #a01818);
             border: 4px solid #FFD700;
             color: #FFD700;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             font-family: 'Fredoka', sans-serif;
             cursor: pointer;
@@ -329,16 +333,23 @@
         }
 
         .jump-btn {
-            width: 100px;
-            height: 100px;
-            font-size: 20px;
+            width: 85px;
+            height: 85px;
+            font-size: 18px;
         }
 
-        /* Mobile layout */
+        /* Mobile layout - landscape */
         @media (pointer: coarse), (max-width: 1024px) {
             body {
                 justify-content: flex-start;
                 padding: 0;
+                overflow: hidden;
+            }
+
+            .game-wrapper {
+                width: 100%;
+                height: 100vh;
+                max-width: 100%;
             }
 
             .mobile-controls {
@@ -349,12 +360,13 @@
                 border-radius: 0;
                 border-width: 2px 0;
                 width: 100%;
-                max-width: 100vw;
+                flex-shrink: 0;
             }
 
             canvas {
                 width: 100%;
                 height: auto;
+                display: block;
             }
 
             .controls-info {
@@ -367,73 +379,156 @@
 
             .score-panel, .time-panel {
                 padding: 8px 15px;
+                font-size: 14px;
+            }
+
+            .logo-container-center {
+                top: 45px;
+            }
+
+            .center-logo {
+                height: 40px;
+            }
+
+            .santa-hat-center {
+                top: -28px;
+                width: 55px;
+                height: 35px;
+            }
+
+            .hat-top {
+                border-left: 27px solid transparent;
+                border-right: 27px solid transparent;
+                border-bottom: 32px solid #c81e1e;
+            }
+
+            .hat-top::before {
+                border-left: 16px solid transparent;
+                border-right: 16px solid transparent;
+                border-bottom: 16px solid #FFD700;
+                top: 5px;
+                left: -16px;
+            }
+
+            .hat-ball {
+                width: 12px;
+                height: 12px;
+                top: -5px;
+                right: 3px;
+            }
+
+            .hat-band {
+                width: 58px;
+                height: 8px;
+            }
+
+            .screen-title {
+                font-size: 22px;
+            }
+
+            .screen-subtitle {
+                font-size: 13px;
+                padding: 0 15px;
+            }
+
+            .start-btn {
+                padding: 10px 25px;
+                font-size: 16px;
+            }
+
+            .merry-christmas {
+                font-size: 26px;
+            }
+
+            .win-logo {
+                height: 50px;
+            }
+
+            .final-score {
+                font-size: 16px;
+            }
+        }
+
+        /* Portrait mode - force landscape message */
+        @media (pointer: coarse) and (orientation: portrait) {
+            .game-wrapper {
+                flex-direction: column;
+            }
+
+            .game-container {
+                width: 100%;
+                height: auto;
+            }
+
+            canvas {
+                width: 100%;
+                height: auto;
+                max-height: 45vh;
+            }
+
+            .mobile-controls {
+                padding: 15px;
+                flex-shrink: 0;
+            }
+
+            .touch-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .jump-btn {
+                width: 75px;
+                height: 75px;
                 font-size: 16px;
             }
 
             .logo-container-center {
-                top: 50px;
+                top: 35px;
             }
 
             .center-logo {
-                height: 45px;
+                height: 35px;
             }
 
             .santa-hat-center {
-                top: -30px;
-                width: 60px;
-                height: 40px;
+                top: -22px;
+                width: 45px;
+                height: 28px;
             }
 
             .hat-top {
-                border-left: 30px solid transparent;
-                border-right: 30px solid transparent;
-                border-bottom: 35px solid #c81e1e;
+                border-left: 22px solid transparent;
+                border-right: 22px solid transparent;
+                border-bottom: 26px solid #c81e1e;
             }
 
             .hat-top::before {
-                border-left: 18px solid transparent;
-                border-right: 18px solid transparent;
-                border-bottom: 18px solid #FFD700;
-                top: 6px;
-                left: -18px;
+                border-left: 13px solid transparent;
+                border-right: 13px solid transparent;
+                border-bottom: 13px solid #FFD700;
+                top: 4px;
+                left: -13px;
             }
 
             .hat-ball {
-                width: 14px;
-                height: 14px;
-                top: -6px;
-                right: 4px;
+                width: 10px;
+                height: 10px;
+                top: -4px;
+                right: 2px;
             }
 
             .hat-band {
-                width: 65px;
-                height: 9px;
+                width: 48px;
+                height: 7px;
             }
 
             .screen-title {
-                font-size: 24px;
+                font-size: 20px;
             }
 
             .screen-subtitle {
-                font-size: 14px;
-                padding: 0 20px;
-            }
-
-            .start-btn {
-                padding: 12px 30px;
-                font-size: 18px;
-            }
-
-            .merry-christmas {
-                font-size: 28px;
-            }
-
-            .win-logo {
-                height: 60px;
-            }
-
-            .final-score {
-                font-size: 18px;
+                font-size: 12px;
             }
         }
     </style>
@@ -495,8 +590,8 @@
         </div>
     </div>
 
-    <!-- Mobile Touch Controls - Outside game container -->
-    <div class="mobile-controls" id="mobileControls">
+    <!-- Mobile Touch Controls - Outside game container, hidden until game starts -->
+    <div class="mobile-controls hidden" id="mobileControls">
         <div class="control-left">
             <button class="touch-btn" id="btnLeft" type="button">◀</button>
             <button class="touch-btn" id="btnRight" type="button">▶</button>

@@ -1210,18 +1210,33 @@ function updateUI() {
 
 function showWinScreen() {
     gameState = 'win';
+    // Hide mobile controls
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+        mobileControls.classList.add('hidden');
+    }
     document.getElementById('winScreen').style.display = 'flex';
     document.getElementById('finalScore').textContent = `Sebrané nástroje: ${collectiblesCount}/10 | Čas: ${Math.ceil(GAME_TIME - timeRemaining)}s`;
 }
 
 function gameOver(reason) {
     gameState = 'gameover';
+    // Hide mobile controls
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+        mobileControls.classList.add('hidden');
+    }
     document.getElementById('gameOverScreen').style.display = 'flex';
     document.getElementById('gameOverReason').textContent = reason;
 }
 
 function startGame() {
     document.getElementById('startScreen').style.display = 'none';
+    // Show mobile controls when game starts
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+        mobileControls.classList.remove('hidden');
+    }
     resetGame();
     gameState = 'playing';
     gameLoop();
