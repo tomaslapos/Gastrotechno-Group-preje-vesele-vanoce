@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastrotechnogroup - Vánoční Hra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4a7cb8 0%, #6a9cd8 50%, #5a8cc8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 60px rgba(200, 30, 30, 0.3),
+                0 0 120px rgba(255, 200, 0, 0.1),
+                inset 0 0 60px rgba(0, 0, 0, 0.5);
+            border: 4px solid #c81e1e;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .score-panel, .time-panel {
+            background: linear-gradient(145deg, rgba(200, 30, 30, 0.9), rgba(150, 20, 20, 0.9));
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: #FFD700;
+            font-size: 18px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 50px;
+            pointer-events: none;
+        }
+
+        #loadingScreen, #startScreen, #winScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(74, 124, 184, 0.95) 0%, rgba(106, 156, 216, 0.95) 100%);
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 215, 0, 0.3);
+            border-top: 5px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #FFD700;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #winScreen, #gameOverScreen {
+            display: none;
+        }
+
+        .screen-title {
+            font-size: 48px;
+            color: #FFD700;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .screen-subtitle {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .start-btn {
+            background: linear-gradient(145deg, #c81e1e, #a01818);
+            color: #FFD700;
+            border: 3px solid #FFD700;
+            padding: 15px 50px;
+            font-size: 24px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 20px rgba(200, 30, 30, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(200, 30, 30, 0.6), 0 0 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .controls-info {
+            margin-top: 30px;
+            color: #ccc;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .controls-info span {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .collectible-icon {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .logo-container-center {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+        }
+
+        .center-logo {
+            height: 88px;
+            filter: drop-shadow(0 3px 10px rgba(0,0,0,0.5));
+        }
+
+        .santa-hat-center {
+            position: absolute;
+            top: -58px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 70px;
+            z-index: 10;
+        }
+
+        .hat-top {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 65px solid #c81e1e;
+            top: 0;
+            left: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .hat-top::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 38px solid transparent;
+            border-right: 38px solid transparent;
+            border-bottom: 38px solid #FFD700;
+            top: 10px;
+            left: -38px;
+        }
+
+        .hat-ball {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #FFD700);
+            border-radius: 50%;
+            top: -12px;
+            right: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .hat-band {
+            position: absolute;
+            bottom: 0;
+            left: -5px;
+            width: 130px;
+            height: 16px;
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+
+        .final-score {
+            font-size: 28px;
+            color: #FFD700;
+            margin: 20px 0;
+        }
+
+        .win-logo {
+            height: 100px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.3));
+        }
+
+        .merry-christmas {
+            font-size: 56px;
+            color: #FFD700;
+            text-shadow: 
+                3px 3px 6px rgba(0,0,0,0.5), 
+                0 0 40px rgba(255, 215, 0, 0.6),
+                0 0 80px rgba(200, 30, 30, 0.4);
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    3px 3px 6px rgba(0,0,0,0.5), 
+                    0 0 40px rgba(255, 215, 0, 0.6),
+                    0 0 80px rgba(200, 30, 30, 0.4);
+            }
+            to {
+                text-shadow: 
+                    3px 3px 6px rgba(0,0,0,0.5), 
+                    0 0 60px rgba(255, 215, 0, 0.8),
+                    0 0 100px rgba(200, 30, 30, 0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="1200" height="600"></canvas>
+        
+        <div class="ui-overlay">
+            <div class="score-panel">
+                <span id="collectibles">🔧 0 / 10</span>
+            </div>
+            <div class="time-panel">
+                <span id="timer">⏱️ 60s</span>
+            </div>
+        </div>
+        
+        <div class="logo-container-center">
+            <div class="santa-hat-center">
+                <div class="hat-top"></div>
+                <div class="hat-ball"></div>
+                <div class="hat-band"></div>
+            </div>
+            <img src="http://gastrotechnogroup.cz/wp-content/uploads/2018/04/gastro-techno-group_logo_colour-01.png" alt="Gastrotechnogroup" class="center-logo">
+        </div>
+
+        <div id="loadingScreen">
+            <img src="http://gastrotechnogroup.cz/wp-content/uploads/2018/04/gastro-techno-group_logo_colour-01.png" alt="Gastrotechnogroup" style="height: 80px; margin-bottom: 30px;">
+            <h1 class="screen-title">🎄 Vánoční Hra 🎄</h1>
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loadingText">Načítání obrázků... 0%</p>
+        </div>
+
+        <div id="startScreen" style="display: none;">
+            <img src="http://gastrotechnogroup.cz/wp-content/uploads/2018/04/gastro-techno-group_logo_colour-01.png" alt="Gastrotechnogroup" style="height: 80px; margin-bottom: 30px;">
+            <h1 class="screen-title">🎄 Vánoční Hra 🎄</h1>
+            <p class="screen-subtitle">Pomozte technikovi sebrat všechny nástroje a dostat se k vánočnímu stromečku!</p>
+            <button class="start-btn" onclick="startGame()">🎮 HRÁT</button>
+            <div class="controls-info">
+                <span>⬅️ Doleva</span>
+                <span>➡️ Doprava</span>
+                <span>⎵ Skok</span>
+            </div>
+        </div>
+
+        <div id="winScreen">
+            <img src="http://gastrotechnogroup.cz/wp-content/uploads/2018/04/gastro-techno-group_logo_colour-01.png" alt="Gastrotechnogroup" class="win-logo">
+            <h1 class="merry-christmas">🎄 Veselé Vánoce 🎄</h1>
+            <p class="screen-subtitle">Technik úspěšně dorazil k vánočnímu stromečku!</p>
+            <div class="final-score" id="finalScore"></div>
+            <button class="start-btn" onclick="restartGame()" style="margin-top: 30px;">🔄 Hrát znovu</button>
+        </div>
+
+        <div id="gameOverScreen">
+            <h1 class="screen-title" style="color: #ff4444;">💀 Konec hry 💀</h1>
+            <p class="screen-subtitle" id="gameOverReason">Spadl jste do propasti!</p>
+            <button class="start-btn" onclick="restartGame()">🔄 Zkusit znovu</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
+
